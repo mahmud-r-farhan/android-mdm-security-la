@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install test dependencies
+        run: python -m pip install --upgrade pip pytest
+
+      - name: Python syntax check (core modules)
+        run: |
+          python -m py_compile core/mdm_inspector.py
+          python -m py_compile core/axml_parser.py
+          python -m py_compile core/apk_analyzer.py
+          python -m py_compile core/logcat_monitor.py
+
+      - name: Shell script syntax check
+        run: |
+          bash -n scripts/adb_check.sh
+          bash -n scripts/setup.sh
+          bash -n scripts/create_testbed_avd.sh
+
+      - name: CLI smoke checks (must work with no device attached)
+        run: |
+          python core/mdm_inspector.py --help
+          python core/apk_analyzer.py --help
+          python core/logcat_monitor.py --help
+
+      - name: Unit tests
+        run: python -m pytest tests/ -v

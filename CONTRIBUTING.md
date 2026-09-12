@@ -17,10 +17,13 @@ This project is strictly for **educational security research, diagnostic auditin
    ```bash
    ./scripts/setup.sh
    ```
-3. Test your code:
+3. Test your code (the same checks CI runs):
    ```bash
-   python3 -m py_compile core/mdm_inspector.py
-   bash -n scripts/adb_check.sh
+   python3 -m py_compile core/mdm_inspector.py core/apk_analyzer.py \
+       core/axml_parser.py core/logcat_monitor.py
+   bash -n scripts/adb_check.sh scripts/setup.sh scripts/create_testbed_avd.sh
+   python3 core/mdm_inspector.py --help     # CLI smoke check
+   python3 -m pytest tests/ -v              # unit tests
    ```
 4. Submit a Pull Request with a clear description of changes.
 

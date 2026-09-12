@@ -6,9 +6,20 @@ __pycache__/
 # Output audit reports
 output/
 
+# Locally downloaded platform-tools (setup.sh fallback install)
+tools/
+
+# Electron GUI build artifacts
+gui/node_modules/
+gui/dist/
+
 # OS / Environment generated files
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
 *.log
+
+# Test / virtualenv caches
+.pytest_cache/
+.venv/
