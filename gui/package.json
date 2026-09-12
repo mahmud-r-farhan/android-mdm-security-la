@@ -1,0 +1,51 @@
+{
+  "name": "mdm-security-lab-gui",
+  "productName": "Android MDM Security Lab",
+  "version": "1.0.0",
+  "description": "Desktop dashboard for the Android Enterprise Security Lab - non-destructive MDM / Device-Policy diagnostics.",
+  "main": "main.js",
+  "license": "Apache-2.0",
+  "author": "Android Enterprise Security Lab contributors",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win",
+    "dist:mac": "electron-builder --mac",
+    "dist:linux": "electron-builder --linux"
+  },
+  "devDependencies": {
+    "electron": "^31.3.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "org.androidsecuritylab.gui",
+    "artifactName": "mdm-security-lab-${version}-${os}-${arch}.${ext}",
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "extraMetadata": {
+      "main": "main.js"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.developer-tools"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Development"
+    }
+  }
+}

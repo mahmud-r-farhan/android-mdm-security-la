@@ -34,13 +34,14 @@ android-enterprise-security-lab/
 │   └── workflows/          # CI/CD and deployment workflows
 ├── website/                # Web landing page (Tailwind CSS, i18n index.html)
 ├── core/                   # Core Python inspection modules & analysis tools
-├── scripts/                # Shell scripts for rapid Linux/macOS ADB diagnostics
+├── gui/                    # Electron desktop dashboard
+├── scripts/                # Setup, diagnostics & testbed automation scripts
 ├── docs/                   # Security architecture specifications
+├── tests/                  # pytest unit tests
 ├── output/                 # Local directory for generated JSON audit reports (git-ignored)
 ├── AGENTS.md               # AI Agent operating directives (This file)
 ├── README.md               # Main project README
 └── LICENSE                 # Apache License 2.0
-
 ```
 
 ---

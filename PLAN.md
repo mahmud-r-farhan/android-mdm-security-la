@@ -31,37 +31,45 @@ The goal of **`android-enterprise-security-lab`** is to provide an open-source, 
 
 ---
 
-### Phase 2: One-Click End-User Installer & Environment Automation
-- [ ] **Windows Automated Setup Suite (`setup.ps1` / `setup.bat`):**
+### Phase 2: One-Click End-User Installer & Environment Automation ✅
+- [x] **Windows Automated Setup Suite (`setup.ps1` / `setup.bat`):**
   - Automated detection, download, and extraction of Google's official `platform-tools`.
-  - Automatic user `PATH` environment variable registration.
-  - One-click launch wrapper that opens the terminal or diagnostic GUI automatically.
-- [ ] **Cross-Platform Installer Script (`setup.sh`):**
-  - Automated dependency setup for Debian/Ubuntu, Arch Linux, and macOS (Homebrew integration).
-- [ ] **OEM Driver Helper:**
-  - Automated diagnostic module verifying whether Samsung, Google, or MediaTek ADB drivers are missing on Windows.
+  - Automatic user `PATH` environment variable registration (no administrator rights required).
+  - One-click launch wrapper (`setup.bat`) that runs setup and offers to launch the inspector.
+- [x] **Cross-Platform Installer Script (`setup.sh`):**
+  - Automated dependency setup for Debian/Ubuntu (apt), Arch (pacman), Fedora (dnf) and macOS (Homebrew), with a no-root local `tools/platform-tools` download fallback.
+- [x] **OEM Driver Helper:**
+  - `scripts/oem_driver_check.ps1` — Device Manager scan identifying Samsung, Google, MediaTek, Xiaomi and other OEM devices by vendor ID, flagging missing/faulty ADB drivers.
 
 ---
 
-### Phase 3: Desktop GUI Application (Electron / Desktop Wrapper)
-- [ ] **Lightweight GUI Wrapper:**
-  - Build a clean desktop interface using Electron or Tauri for non-technical users.
-  - Bundled internal relative execution of `platform-tools/adb` (no manual PATH setup needed).
+### Phase 3: Desktop GUI Application (Electron / Desktop Wrapper) ✅
+- [x] **Lightweight GUI Wrapper (`gui/`):**
+  - Electron desktop app with `contextIsolation` enabled and a minimal IPC bridge.
+  - Reuses the Python inspection engine (`mdm_inspector --json`) as its analysis backend.
   - Visual dashboard displaying:
     - Connected device information (Brand, Model, Android Version, SDK level).
     - Device Owner (DO) / Profile Owner (PO) status indicator (Visual badge: Safe vs. Managed).
     - List of detected MDM/EMI packages.
-    - One-click "Export Audit Report (JSON/PDF)" button.
+    - One-click "Export Audit Report (JSON)" button with native save dialog.
 
 ---
 
-### Phase 4: Advanced Static Analysis & Dynamic Monitoring
-- [ ] **APK Manifest & Permission Analyzer:**
-  - Python static analysis module parsing target MDM APKs for `BIND_DEVICE_ADMIN`, `MANAGE_DEVICE_POLICY_*`, and System Overlay permissions.
-- [ ] **Live Telemetry & Logcat Monitor:**
-  - Real-time logging agent capturing DevicePolicyManager IPC broadcasts and cloud attestation ping requests via `adb logcat`.
-- [ ] **Framework Emulation & Testbed:**
-  - Documentation and scripts for building local Android Virtual Devices (AVD) running managed enterprise profiles for testing.
+### Phase 4: Advanced Static Analysis & Dynamic Monitoring ✅
+- [x] **APK Manifest & Permission Analyzer (`core/apk_analyzer.py`):**
+  - Pure-Python binary AXML decoder (`core/axml_parser.py`) — no external tooling required.
+  - Flags `BIND_DEVICE_ADMIN`, `MANAGE_DEVICE_POLICY_*`, `SYSTEM_ALERT_WINDOW`, DeviceAdmin receivers, boot-persistence receivers and accessibility services.
+- [x] **Live Telemetry & Logcat Monitor (`core/logcat_monitor.py`):**
+  - Real-time, read-only monitor highlighting DevicePolicyManager / MDM traffic from `adb logcat`, with optional tee-to-file.
+- [x] **Framework Emulation & Testbed:**
+  - `scripts/create_testbed_avd.sh` + `docs/Testbed.md` — disposable emulator-only managed-enterprise AVD with optional Google TestDPC Device Owner provisioning.
+
+---
+
+### Quality Assurance ✅
+- [x] Unit test-suite (`tests/`) with mocked ADB and byte-accurate synthetic AXML fixtures.
+- [x] GitHub Actions CI (`.github/workflows/ci.yml`): syntax, CLI smoke checks and pytest on Python 3.9/3.11/3.12.
+- [x] GitHub Pages deployment workflow (`.github/workflows/deploy.yml`).
 
 ---
 
@@ -70,18 +78,19 @@ The goal of **`android-enterprise-security-lab`** is to provide an open-source, 
 ```text
 android-enterprise-security-lab/
 ├── .github/
-│   └── workflows/          # GitHub Actions deployment pipelines
-├── website/                # Web landing page (Tailwind CSS, i18n index.html)
+│   └── workflows/          # CI validation + GitHub Pages deployment
 ├── core/                   # Python inspection modules & analysis tools
-│   ├── __init__.py
-│   └── mdm_inspector.py    # Primary CLI inspection utility
-├── scripts/                # Setup & diagnostic scripts
-│   ├── adb_check.sh        # Bash quick scan
-│   ├── setup.ps1           # Automated Windows installer & PATH setup
-│   └── setup.sh            # Linux/macOS automated environment setup
-├── docs/                   # Educational & architectural documentation
-│   └── Architecture.md     # Technical reference on Android DPM & Knox Guard
+│   ├── mdm_inspector.py    # Primary CLI inspection utility
+│   ├── apk_analyzer.py     # APK manifest & permission analyzer
+│   ├── axml_parser.py      # Pure-Python binary manifest decoder
+│   └── logcat_monitor.py   # Live DPM/MDM telemetry monitor
+├── gui/                    # Electron desktop dashboard (Phase 3)
+├── scripts/                # Setup, diagnostics & testbed automation
+├── docs/                   # Security architecture specifications & testbed guide
+├── tests/                  # pytest unit tests
+├── website/                # Web landing page (Tailwind CSS, i18n index.html)
 ├── output/                 # Generated diagnostic reports (git-ignored)
+├── tools/                  # Local platform-tools fallback install (git-ignored)
 ├── AGENTS.md               # Directives for AI coding assistants
 ├── PLAN.md                 # Project roadmap & milestone tracking
 ├── README.md               # Main project README
