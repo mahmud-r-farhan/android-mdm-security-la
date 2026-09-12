@@ -1,0 +1,14 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Output audit reports
+output/
+
+# OS / Environment generated files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
