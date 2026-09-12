@@ -117,7 +117,7 @@ class MDMInspector:
 
         return detected
 
-    def generate_audit_report((self) -> Dict[str, Any]:
+    def generate_audit_report(self) -> Dict[str, Any]:
         """Run complete inspection and compile results into a structured dictionary."""
         if not self.check_device_connection():
             return {"error": "Device connection failed"}

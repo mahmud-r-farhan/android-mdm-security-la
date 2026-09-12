@@ -97,7 +97,3 @@ Within this lab environment, analysis of MDM policies is conducted using non-des
 1. **Policy Enumeration:** Reading registered package managers and active DPM state via `adb shell dpm list-owners`.
 2. **Package Profiling:** Inspecting manifest permissions (`android.permission.BIND_DEVICE_ADMIN`, `MANAGE_DEVICE_POLICY_*`).
 3. **Network Telemetry:** Auditing outgoing REST API endpoints to determine remote attestation frequencies and payload configurations.
-
-
-
-```

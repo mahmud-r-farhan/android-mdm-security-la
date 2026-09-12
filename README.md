@@ -1,7 +1,7 @@
-# MDM-Unlocker-PoC: Educational MDM & Knox Security Research
+# Android Enterprise Security Lab
 
 > **Disclaimer & Notice of Educational Intent**
-> This repository is strictly created for **educational, security research, and analytical purposes**. The code, methodologies, and technical documentation herein aim to assist mobile security researchers, forensic analysts, and Android developers in understanding Android Device Admin APIs, Mobile Device Management (MDM) architecture, and OEM-level security frameworks (e.g., Samsung Knox, PayJoy, OEM Config). 
+> This repository is strictly created for **educational, security research, and analytical purposes**. The code, methodologies, and technical documentation herein aim to assist mobile security researchers, forensic analysts, system administrators, and Android developers in understanding Android Device Admin APIs, Mobile Device Management (MDM) architecture, and OEM-level security frameworks (e.g., Samsung Knox, PayJoy, OEM Config).
 > 
 > Unauthorized bypass or alteration of device management controls on financed or third-party devices may violate terms of service or regional telecommunication laws. The maintainers do not endorse, encourage, or support illegal activities or commercial bypass services.
 
@@ -9,12 +9,12 @@
 
 ## 📌 Project Overview
 
-**MDM-Unlocker-PoC** is an open-source framework and knowledge base dedicated to analyzing how commercial financing locking applications and enterprise MDM solutions operate on the Android OS level.
+**Android Enterprise Security Lab** is an open-source framework and knowledge base dedicated to analyzing how commercial financing locking applications and enterprise MDM solutions operate on the Android OS level.
 
 Modern financing platforms enforce remote locking using Android's deep system privileges (`DeviceOwner`, `DeviceAdmin`, or custom OEM extensions). This project explores:
 1. Identifying MDM agents and associated package signatures.
 2. Understanding the privilege escalation and persistence mechanisms of lock apps.
-3. Analyzing potential bypass vectors via ADB debug interfaces, package management manipulation, and system privileges.
+3. Analyzing potential bypass vectors via ADB debug interfaces, package management manipulation, and system privileges in a non-destructive manner.
 4. Documenting countermeasures and security mitigations for Android security developers.
 
 ---
@@ -51,16 +51,24 @@ MDM locking software relies on layered security controls within the Android OS:
 ## 📂 Repository Structure
 
 ```
-├── docs/
-│   ├── mdm-architecture.md         # Detailed breakdown of Android DPM APIs
-│   ├── knox-guard-analysis.md       # Hardware vs Software MDM binding
-│   └── threat-model.md             # Security threat modeling of persistence
-├── scripts/
-│   ├── package_detector.sh         # Bash script to scan for active MDM/Admin packages via ADB
-│   ├── test_payload.py             # Python utility demonstrating package state inspection
-│   └── adb_privilege_checker.py    # Checks active Device Owner status on connected device
-├── README.md
-└── LICENSE
+android-enterprise-security-lab/
+├── .github/
+│   └── workflows/          # GitHub Actions deployment pipelines
+├── website/                # Web landing page (Tailwind CSS, i18n index.html)
+├── core/                   # Python inspection modules & analysis tools
+│   ├── __init__.py
+│   └── mdm_inspector.py    # Primary CLI inspection utility
+├── scripts/                # Setup & diagnostic scripts
+│   ├── adb_check.sh        # Bash quick scan
+│   ├── setup.ps1           # Automated Windows installer & PATH setup
+│   └── setup.sh            # Linux/macOS automated environment setup
+├── docs/                   # Educational & architectural documentation
+│   └── Architecture.md     # Technical reference on Android DPM & Knox Guard
+├── output/                 # Generated diagnostic reports (git-ignored)
+├── AGENTS.md               # Directives for AI coding assistants
+├── PLAN.md                 # Project roadmap & milestone tracking
+├── README.md               # Main project README
+└── LICENSE                 # Apache License 2.0
 ```
 
 ---
@@ -69,57 +77,45 @@ MDM locking software relies on layered security controls within the Android OS:
 
 ### Prerequisites
 * **Android SDK Platform-Tools** (`adb`, `fastboot`)
-* **Python 3.8+**
+* **Python 3.9+**
 * An Android test device/emulator running **Android 10 (API Level 29) or higher** with Developer Options enabled.
 
-### Installation & Setup
+### Environment Setup
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-username/MDM-Unlocker-PoC.git
-   cd MDM-Unlocker-PoC
-   ```
+Execute the appropriate setup utility for your OS:
 
-2. **Connect your test device via USB:**
-   Ensure USB Debugging is authorized on your target test environment.
-   ```bash
-   adb devices
-   ```
+* **Linux / macOS:**
+  ```bash
+  chmod +x scripts/setup.sh
+  ./scripts/setup.sh
+  ```
 
-3. **Run the MDM Package Detector:**
-   The detection script scans active system packages against known enterprise and financing MDM signatures (e.g., PayJoy, Knox Guard, OEM Config).
-   ```bash
-   chmod +x scripts/package_detector.sh
-   ./scripts/package_detector.sh
-   ```
+* **Windows (PowerShell):**
+  ```powershell
+  .\scripts\setup.ps1
+  ```
 
 ---
 
 ## 🧪 Research & Analysis Methodology
 
-### Phase 1: Package Identification
-Detecting active admin apps on the device using Android shell utilities:
+### Phase 1: Package & Policy Identification
+Run the Python MDM Inspector to audit registered `DeviceOwner` policies and installed MDM signatures:
 ```bash
-adb shell pm list packages -e | grep -i "admin\|lock\|pay\|mdm"
-adb shell dumpsys device_policy
+python3 core/mdm_inspector.py
+```
+
+Alternatively, run the rapid Bash diagnostic script:
+```bash
+chmod +x scripts/adb_check.sh
+./scripts/adb_check.sh
 ```
 
 ### Phase 2: Evaluating Privilege States
 Determining whether the targeted app operates as a standard `DeviceAdmin` or a deeper `DeviceOwner`:
 ```bash
-adb shell dpm status
+adb shell dpm list-owners
 ```
-
-### Phase 3: Mitigation & Disabling Vectors (PoC)
-Testing package state modification for standard (non-Knox) MDM profiles:
-```bash
-# Hiding user-level package state
-adb shell pm hide <package_name>
-
-# Disabling user zero installation state
-adb shell pm uninstall -k --user 0 <package_name>
-```
-*Note: Hardware-backed solutions (like Knox Guard) will detect state tampering upon internet reconnection via cloud verification.*
 
 ---
 
@@ -135,13 +131,10 @@ For enterprise developers and financial application architects, the following me
 
 ## 🤝 Contributing
 
-Contributions for research documentation, new MDM signature identification, and educational analysis are welcome! Please follow these guidelines:
-1. Ensure all submissions focus on security research and mitigation strategies.
-2. Do not include commercial bypass tools, proprietary hardware dumps, or illegal keygens.
-3. Open an Issue first to discuss proposed updates.
+Contributions for research documentation, new MDM signature identification, and educational analysis are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
 ---
 
 ## 📜 License
 
-This project is licensed under the [MIT License](LICENSE) - feel free to use it for research and educational purposes.
+This project is licensed under the [Apache License 2.0](LICENSE) - feel free to use it for research and educational purposes.
